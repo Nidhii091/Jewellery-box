@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Jewellery Box </title>
+
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+</head>
+
+<body>
+<a-scene background="color:#1d1d21">
+
+  <!-- ENVIRONMENT -->
+  <a-entity environment="preset: goldmine; ground: none; lighting: point"></a-entity>
+
+  <!-- CAMERA -->
+  <a-entity position="0 1.6 5">
+    <a-camera></a-camera>
+  </a-entity>
+
+  <!-- LIGHTS -->
+  <a-entity light="type:ambient; intensity:1; color:#fff"></a-entity>
+  <a-entity light="type:spot; intensity:2.2; angle:35" position="0 4.5 3"></a-entity>
+  <a-entity light="type:point; intensity:1.5; distance:10; color:#ffd4d4" position="0 3 -3"></a-entity>
+  <a-entity light="type:hemisphere; intensity:1; color:#ffffff; groundColor:#555"></a-entity>
+
+  <!-- BOX -->
+  <a-entity id="mainBox" position="0 0 0">
+
+    <!-- Base -->
+    <a-box width="4" height="0.8" depth="2.2" position="0 0.4 0" color="#3b0c0c"></a-box>
+
+    <!-- Lid -->
+    <a-plane id="mainLid" class="lidClickable"
+             width="4" height="2.2"
+             position="0 1.0 -1.1"
+             rotation="-70 0 0"
+             material="color:#3b0c0c; side:double">
+    </a-plane>
+
+    <!-- ---------------- RING 1 ---------------- -->
+<a-entity id="ring1" class="clickable"
+          position="-1.4 0.75 0.5"
+          data-up="false">
+
+  <a-entity class="clickable"
+            geometry="primitive:torus; radius:0.55; radius-tubular:0.02"
+            rotation="0 0 180"
+            material="color:#e8d28e; metalness:1; roughness:0.1; envMapIntensity:1.5">
+    <a-animation attribute="rotation" dur="2200" to="0 360 0"
+                 repeat="indefinite" easing="linear"></a-animation>
+  </a-entity>
+
+  <a-entity class="clickable"
+            geometry="primitive:icosahedron; radius:0.22"
+            position="0 0.65 0"
+            material="color:white; transparent:true; opacity:0.92;">
+  </a-entity>
+
+</a-entity>
+
+
+
+    <!-- ---------------- RING 2 ---------------- -->
+<a-entity id="ring2" class="clickable"
+         position="0 0.75 0.5"
+          data-up="false">
+
+  <a-entity class="clickable"
+            geometry="primitive:torus; radius:0.55; radius-tubular:0.02"
+            rotation="0 0 180"
+            material="color:#e8d28e; metalness:1; roughness:0.1; envMapIntensity:1.5">
+    <a-animation attribute="rotation" dur="2200" to="0 360 0"
+                 repeat="indefinite" easing="linear"></a-animation>
+  </a-entity>
+
+  <a-entity class="clickable"
+            geometry="primitive:icosahedron; radius:0.22"
+            position="0 0.65 0"
+            material="color:white; transparent:true; opacity:0.92;">
+  </a-entity>
+
+</a-entity>
+
+
+
+    <!-- ---------------- RING 3 ---------------- -->
+   <a-entity id="ring3" class="clickable"
+          position="1.4 0.75 0.5"
+          data-up="false">
+
+  <a-entity class="clickable"
+            geometry="primitive:torus; radius:0.55; radius-tubular:0.02"
+            rotation="0 0 180"
+            material="color:#e8d28e; metalness:1; roughness:0.1; envMapIntensity:1.5">
+    <a-animation attribute="rotation" dur="2200" to="0 360 0"
+                 repeat="indefinite" easing="linear"></a-animation>
+  </a-entity>
+
+  <a-entity class="clickable"
+            geometry="primitive:icosahedron; radius:0.22"
+            position="0 0.65 0"
+            material="color:white; transparent:true; opacity:0.92;">
+  </a-entity>
+
+</a-entity>
+s
+
+  <!-- CURSOR + RAYCASTER -->
+  <a-entity cursor="rayOrigin: mouse"
+            raycaster="objects: .clickable, .lidClickable"></a-entity>
+
+
+  <!-- SCRIPT -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      /* ===== LID OPEN/CLOSE ===== */
+      let lidOpen = false;
+      const lid = document.getElementById("mainLid");
+
+      lid.addEventListener("click", () => {
+        lid.setAttribute("animation__lid", {
+          property: "rotation",
+          to: lidOpen ? "-70 0 0" : "0 0 0",
+          dur: 700,
+          easing: "easeOutQuad"
+        });
+        lidOpen = !lidOpen;
+      });
+
+
+      /* ===== RINGS RAISE INDIVIDUALLY ===== */
+      ["ring1", "ring2", "ring3"].forEach((id) => {
+        const ring = document.getElementById(id);
+
+        ring.addEventListener("click", (e) => {
+          e.stopPropagation(); // PREVENT CLICK FROM HITTING LID
+
+          let isUp = ring.getAttribute("data-up") === "true";
+          let pos = ring.getAttribute("position");
+
+          ring.setAttribute("animation__move", {
+            property: "position",
+            to: `${pos.x} ${isUp ? 0.75 : 1.25} ${pos.z}`,
+            dur: 450,
+            easing: "easeOutQuad"
+          });
+
+          ring.setAttribute("data-up", (!isUp).toString());
+        });
+      });
+
+    });
+  </script>
+
+</a-scene>
+</body>
+</html>
